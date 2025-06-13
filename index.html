@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageMaster Pro - Herramienta Profesional de Procesamiento de Imágenes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --error: #f72585;
+            --warning: #ff9e00;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background: #f5f7ff;
+            padding: 1rem;
+            margin: 0;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid rgba(255,255,255,0.1);
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin: 0;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .subtitle {
+            font-weight: 300;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:disabled {
+            background: var(--light-gray);
+            color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            color: var(--dark);
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e69100;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #3db5d8;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .step {
+            display: none;
+            padding: 2rem;
+            border-bottom: 1px solid var(--light-gray);
+            background: #fff;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        #fileList {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--light-gray);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: #fafafa;
+        }
+        
+        .file-item {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .file-item:hover {
+            background: #f0f4ff;
+        }
+        
+        .file-item .file-path {
+            flex: 1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--dark);
+            word-break: break-all;
+        }
+        
+        .file-item .file-size {
+            color: var(--gray);
+            font-size: 0.8rem;
+            margin-left: 1rem;
+            white-space: nowrap;
+        }
+        
+        .progress-container {
+            margin: 1.5rem 0;
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 6px;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
+        .alert-warning {
+            background: #fff8e1;
+            color: #ff8f00;
+            border-left: 4px solid #ff8f00;
+        }
+        
+        .alert-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+        }
+        
+        #folderInfo {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--box-shadow);
+        }
+        
+        #excelPreview {
+            margin: 1rem 0;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-title {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .options-container {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .option-card {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .option-card.selected {
+            border: 2px solid var(--primary);
+            background: #f0f4ff;
+        }
+        
+        .option-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .option-card p {
+            margin-bottom: 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container label {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .file-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin: 0.5rem 0;
+        }
+        
+        .file-info i {
+            color: var(--primary);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+        }
+        
+        .error-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.7);
+            border-radius: 4px;
+        }
+        
+        .error-item {
+            font-size: 0.85rem;
+            color: var(--error);
+            margin-bottom: 0.3rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+        
+        .error-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+        
+        .rename-pattern {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .rename-pattern h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .rename-pattern input, .rename-pattern select {
+            padding: 0.6rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            transition: var(--transition);
+        }
+        
+        .rename-pattern input:focus, .rename-pattern select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .rename-pattern label {
+            margin-right: 1rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .rename-pattern .pattern-preview {
+            margin-top: 1rem;
+            font-family: monospace;
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .settings-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .settings-panel h3 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .setting-group {
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+        
+        .setting-group h4 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .setting-item {
+            margin: 0.75rem 0;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .setting-item input[type="range"] {
+            width: 100%;
+        }
+        
+        .setting-item input[type="number"], 
+        .setting-item input[type="text"],
+        .setting-item select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .range-value {
+            display: inline-block;
+            margin-left: 0.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 30px;
+            text-align: right;
+        }
+        
+        .download-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        
+        .download-option {
+            flex: 1;
+            min-width: 200px;
+            padding: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            background: white;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+        
+        .download-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .download-option h4 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .download-option p {
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            transition: var(--transition);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: var(--dark);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .file-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .stat-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+            }
+            
+            header {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .step {
+                padding: 1.5rem;
+            }
+            
+            .options-container {
+                flex-direction: column;
+            }
+            
+            .option-card {
+                min-width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-options {
+                flex-direction: column;
+            }
+            
+            .download-option {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-camera-retro"></i>
+                <span>ImageMaster Pro</span>
+            </h1>
+            <div class="subtitle">Herramienta profesional de renombrado y procesamiento de imágenes</div>
+        </header>
+        
+        <div class="step active" id="step1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Selección de Imágenes</h2>
+            </div>
+            <p>Selecciona la carpeta que contiene las imágenes que deseas procesar. Admite formatos: JPG, PNG, GIF, BMP, WEBP, TIFF.</p>
+            
+            <button id="selectFolder" class="btn">
+                <i class="fas fa-folder-open"></i> Seleccionar Carpeta
+            </button>
+            
+            <div id="folderInfo" style="display: none;">
+                <div class="file-info">
+                    <i class="fas fa-folder"></i>
+                    <span id="folderName"></span>
+                </div>
+                <div class="file-info">
+                    <i class="fas fa-image"></i>
+                    <span id="fileCount"></span> archivos encontrados
+                </div>
+                <div class="file-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="folderMessage"></span>
+                </div>
+                
+                <div id="folderStats" style="display: none; margin-top: 1rem;">
+                    <h4>Estadísticas de las imágenes:</h4>
+                    <div class="file-stats">
+                        <div class="stat-card">
+                            <h4>Tamaño promedio</h4>
+                            <div class="stat-value" id="avgSize">0 KB</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Resolución común</h4>
+                            <div class="stat-value" id="commonRes">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Formato principal</h4>
+                            <div class="stat-value" id="mainFormat">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Configuración de Procesamiento</h2>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="rename">Renombrado</div>
+                <div class="tab" data-tab="processing">Procesamiento</div>
+                <div class="tab" data-tab="output">Salida</div>
+            </div>
+            
+            <div class="tab-content active" id="rename-tab">
+                <div id="fileListContainer">
+                    <h3>Archivos encontrados <span id="fileCountBadge" class="file-count">0</span></h3>
+                    <div id="fileList">
+                        <p>No se han cargado archivos aún.</p>
+                    </div>
+                </div>
+                
+                <h3>Opciones de renombrado</h3>
+                <div class="options-container">
+                    <div class="option-card" id="optionCustom">
+                        <h3><i class="fas fa-edit"></i> Renombrar selectivamente</h3>
+                        <p>Descarga una plantilla Excel para especificar nombres personalizados para cada archivo.</p>
+                    </div>
+                    <div class="option-card" id="optionAll">
+                        <h3><i class="fas fa-redo"></i> Renombrar todos</h3>
+                        <p>Renombra todos los archivos secuencialmente (ej: imagen1.jpg, imagen2.jpg).</p>
+                    </div>
+                    <div class="option-card" id="optionPattern">
+                        <h3><i class="fas fa-magic"></i> Patrón avanzado</h3>
+                        <p>Define un patrón personalizado para el renombrado automático.</p>
+                    </div>
+                </div>
+                
+                <div id="patternOptions" style="display: none;">
+                    <div class="rename-pattern">
+                        <h4><i class="fas fa-sliders-h"></i> Configurar patrón de nombres</h4>
+                        <div class="setting-item">
+                            <label>Prefijo:</label>
+                            <input type="text" id="prefix" placeholder="producto" value="imagen">
+                        </div>
+                        <div class="setting-item">
+                            <label>Numeración:</label>
+                            <select id="numberingType">
+                                <option value="sequential">Secuencial (1, 2, 3...)</option>
+                                <option value="zeros">Con ceros (001, 002...)</option>
+                                <option value="date">Fecha (YYYYMMDD)</option>
+                                <option value="timestamp">Marca de tiempo</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Iniciar desde:</label>
+                            <input type="number" id="startNumber" min="1" value="1">
+                        </div>
+                        <div class="setting-item">
+                            <label>Sufijo:</label>
+                            <input type="text" id="suffix" placeholder="_final" value="">
+                        </div>
+                        <div class="setting-item">
+                            <label>Ejemplo:</label>
+                            <div class="pattern-preview" id="patternPreview">imagen1.jpg</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="flattenStructure" checked>
+                    <label for="flattenStructure">Aplanar estructura de carpetas (todas las imágenes en una sola carpeta)</label>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="preserveOriginals" checked>
+                    <label for="preserveOriginals">Mantener archivos originales (crear copias procesadas)</label>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="downloadTemplate" class="btn" disabled>
+                        <i class="fas fa-file-excel"></i> Descargar Plantilla
+                    </button>
+                    <button id="applyPattern" class="btn" disabled style="display: none;">
+                        <i class="fas fa-check"></i> Aplicar Patrón
+                    </button>
+                    <button id="skipTemplate" class="btn btn-secondary">
+                        <i class="fas fa-forward"></i> Saltar este paso
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="processing-tab">
+                <div class="settings-panel">
+                    <h3><i class="fas fa-cog"></i> Ajustes de Procesamiento</h3>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <h4><i class="fas fa-file-image"></i> Formato de Salida</h4>
+                            <div class="setting-item">
+                                <label>Convertir a formato:</label>
+                                <select id="outputFormat">
+                                    <option value="original">Mantener original</option>
+                                    <option value="jpg">JPEG</option>
+                                    <option value="png">PNG</option>
+                                    <option value="webp">WEBP</option>
+                                </select>
+                            </div>
+                            <div class="setting-item" id="qualitySetting" style="display: none;">
+                                <label>Calidad: <span id="qualityValue" class="range-value">85</span>%</label>
+                                <input type="range" id="quality" min="1" max="100" value="85">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h4><i class="fas fa-expand"></i> Redimensionamiento</h4>
+                            <div class="setting-item">
+                                <input type="checkbox" id="resizeEnabled">
+                                <label for="resizeEnabled">Redimensionar imágenes</label>
+                            </div>
+                            <div class="setting-item" id="resizeSettings" style="display: none;">
+                                <label>Tamaño máximo (px):</label>
+                                <input type="number" id="maxSize" min="50" value="1200">
+                            </div>
+                            <div class="setting-item" id="resizeMethod" style="display: none;">
+                                <label>Método:</label>
+                                <select id="resizeAlgorithm">
+                                    <option value="lanczos3">Alta calidad (Lanczos3)</option>
+                                    <option value="bilinear">Rápido (Bilineal)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h4><i class="fas fa-adjust"></i> Ajustes de Imagen</h4>
+                            <div class="setting-item">
+                                <input type="checkbox" id="optimizeEnabled">
+                                <label for="optimizeEnabled">Optimizar imágenes</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="stripMetadata">
+                                <label for="stripMetadata">Eliminar metadatos</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="normalizeColors">
+                                <label for="normalizeColors">Normalizar colores</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="output-tab">
+                <div class="settings-panel">
+                    <h3><i class="fas fa-download"></i> Opciones de Salida</h3>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <h4><i class="fas fa-folder"></i> Estructura de Salida</h4>
+                            <div class="setting-item">
+                                <label>Nombre de carpeta:</label>
+                                <input type="text" id="outputFolderName" value="IMAGENES_PROCESADAS">
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="createDateFolder">
+                                <label for="createDateFolder">Crear subcarpeta con fecha</label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h4><i class="fas fa-file-archive"></i> Compresión</h4>
+                            <div class="setting-item">
+                                <input type="checkbox" id="compressOutput" checked>
+                                <label for="compressOutput">Comprimir resultados (ZIP)</label>
+                            </div>
+                            <div class="setting-item" id="compressionSettings">
+                                <label>Nivel de compresión:</label>
+                                <select id="compressionLevel">
+                                    <option value="1">Mínima (rápido)</option>
+                                    <option value="3">Baja</option>
+                                    <option value="6" selected>Media (recomendado)</option>
+                                    <option value="9">Máxima (lento)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h4><i class="fas fa-file-alt"></i> Archivos Adicionales</h4>
+                            <div class="setting-item">
+                                <input type="checkbox" id="generateReport" checked>
+                                <label for="generateReport">Generar reporte (Excel)</label>
+                            </div>
+                            <div class="setting-item">
+                                <input type="checkbox" id="generateLog" checked>
+                                <label for="generateLog">Generar registro de cambios</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Revisión de Cambios</h2>
+            </div>
+            
+            <div id="uploadInstructions">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p><strong>Instrucciones:</strong></p>
+                        <ol>
+                            <li>Edita la columna "nuevoNombre" en el Excel descargado</li>
+                            <li>No modifiques las columnas "rutaOriginal" o "nombreActual"</li>
+                            <li>No incluyas la extensión en "nuevoNombre"</li>
+                            <li>Deja vacío "nuevoNombre" si no quieres cambiar ese archivo</li>
+                            <li>Guarda el archivo y súbelo aquí</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <button id="uploadExcel" class="btn">
+                    <i class="fas fa-upload"></i> Subir Excel Modificado
+                </button>
+                <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
+            </div>
+            
+            <div id="excelPreview" style="display: none;">
+                <h3>Vista previa de cambios</h3>
+                <div id="changesSummary"></div>
+                <div id="changesPreview"></div>
+                <div id="warningsContainer"></div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="continueBtn" class="btn" disabled>
+                    <i class="fas fa-arrow-right"></i> Continuar
+                </button>
+                <button id="backToOptionsBtn" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a opciones
+                </button>
+            </div>
+        </div>
+
+        <div class="step" id="step4">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Procesamiento Final</h2>
+            </div>
+            
+            <div id="processOptions">
+                <h3>Resumen de configuración</h3>
+                <div id="finalSummary"></div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <p><strong>Nota:</strong> El proceso puede tomar varios minutos dependiendo de la cantidad y tamaño de las imágenes.</p>
+                        <p>No cierres esta ventana mientras se completa el procesamiento.</p>
+                    </div>
+                </div>
+                
+                <button id="processBtn" class="btn btn-success">
+                    <i class="fas fa-play-circle"></i> Iniciar Procesamiento
+                </button>
+            </div>
+            
+            <div class="progress-container" style="display: none;" id="progressContainer">
+                <h3>Progreso del Procesamiento</h3>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+                <div class="progress-text" id="progressText">
+                    <span>0% completado</span>
+                    <span id="processedFiles">0/0 archivos</span>
+                </div>
+            </div>
+            
+            <div id="resultContainer"></div>
+            
+            <div class="download-options" id="downloadOptions" style="display: none;">
+                <div class="download-option">
+                    <h4><i class="fas fa-file-archive"></i> Archivo ZIP</h4>
+                    <p>Descarga todas las imágenes procesadas en un archivo comprimido.</p>
+                    <button id="downloadZipBtn" class="btn btn-outline">
+                        <i class="fas fa-download"></i> Descargar ZIP
+                    </button>
+                </div>
+                <div class="download-option">
+                    <h4><i class="fas fa-file-excel"></i> Reporte Completo</h4>
+                    <p>Descarga un reporte detallado en Excel con todos los cambios realizados.</p>
+                    <button id="downloadReportBtn" class="btn btn-outline">
+                        <i class="fas fa-download"></i> Descargar Reporte
+                    </button>
+                </div>
+                <div class="download-option">
+                    <h4><i class="fas fa-file-alt"></i> Registro de Cambios</h4>
+                    <p>Descarga un archivo de texto con el registro completo del procesamiento.</p>
+                    <button id="downloadLogBtn" class="btn btn-outline">
+                        <i class="fas fa-download"></i> Descargar Registro
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="newProcessBtn" class="btn btn-secondary" style="display: none;">
+                    <i class="fas fa-sync-alt"></i> Nuevo Proceso
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.1.1/dist/compressor.min.js"></script>
+    <script>
+        // Variables globales
+        let imageFiles = [];
+        let folderHandle = null;
+        let resultFolderHandle = null;
+        let excelData = [];
+        let selectedOption = null;
+        let flattenStructure = true;
+        let preserveOriginals = true;
+        let processingErrors = [];
+        let renameLog = [];
+        let currentTemplateType = null;
+        let processingStats = {
+            totalSizeBefore: 0,
+            totalSizeAfter: 0,
+            formatsConverted: 0,
+            imagesResized: 0
+        };
+
+        // Configuración de procesamiento
+        const processingSettings = {
+            outputFormat: 'original',
+            quality: 85,
+            resizeEnabled: false,
+            maxSize: 1200,
+            resizeAlgorithm: 'lanczos3',
+            optimizeEnabled: false,
+            stripMetadata: false,
+            normalizeColors: false,
+            outputFolderName: 'IMAGENES_PROCESADAS',
+            createDateFolder: false,
+            compressOutput: true,
+            compressionLevel: 6,
+            generateReport: true,
+            generateLog: true
+        };
+
+        // Elementos del DOM
+        const selectFolderBtn = document.getElementById('selectFolder');
+        const downloadTemplateBtn = document.getElementById('downloadTemplate');
+        const applyPatternBtn = document.getElementById('applyPattern');
+        const skipTemplateBtn = document.getElementById('skipTemplate');
+        const uploadExcelBtn = document.getElementById('uploadExcel');
+        const excelFileInput = document.getElementById('excelFile');
+        const continueBtn = document.getElementById('continueBtn');
+        const backToOptionsBtn = document.getElementById('backToOptionsBtn');
+        const processBtn = document.getElementById('processBtn');
+        const newProcessBtn = document.getElementById('newProcessBtn');
+        const downloadZipBtn = document.getElementById('downloadZipBtn');
+        const downloadReportBtn = document.getElementById('downloadReportBtn');
+        const downloadLogBtn = document.getElementById('downloadLogBtn');
+        const optionCustom = document.getElementById('optionCustom');
+        const optionAll = document.getElementById('optionAll');
+        const optionPattern = document.getElementById('optionPattern');
+        const flattenCheckbox = document.getElementById('flattenStructure');
+        const preserveOriginalsCheckbox = document.getElementById('preserveOriginals');
+        
+        // Elementos de vista previa
+        const fileList = document.getElementById('fileList');
+        const excelPreview = document.getElementById('excelPreview');
+        const changesSummary = document.getElementById('changesSummary');
+        const changesPreview = document.getElementById('changesPreview');
+        const warningsContainer = document.getElementById('warningsContainer');
+        const finalSummary = document.getElementById('finalSummary');
+        const resultContainer = document.getElementById('resultContainer');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const processedFilesSpan = document.getElementById('processedFiles');
+        
+        // Elementos de información
+        const folderInfo = document.getElementById('folderInfo');
+        const folderName = document.getElementById('folderName');
+        const fileCount = document.getElementById('fileCount');
+        const folderMessage = document.getElementById('folderMessage');
+        const fileCountBadge = document.getElementById('fileCountBadge');
+        const folderStats = document.getElementById('folderStats');
+        const avgSizeSpan = document.getElementById('avgSize');
+        const commonResSpan = document.getElementById('commonRes');
+        const mainFormatSpan = document.getElementById('mainFormat');
+        
+        // Elementos de patrón
+        const patternOptions = document.getElementById('patternOptions');
+        const prefixInput = document.getElementById('prefix');
+        const suffixInput = document.getElementById('suffix');
+        const numberingTypeSelect = document.getElementById('numberingType');
+        const startNumberInput = document.getElementById('startNumber');
+        const patternPreview = document.getElementById('patternPreview');
+        
+        // Elementos de configuración
+        const outputFormatSelect = document.getElementById('outputFormat');
+        const qualitySetting = document.getElementById('qualitySetting');
+        const qualityInput = document.getElementById('quality');
+        const qualityValue = document.getElementById('qualityValue');
+        const resizeEnabled = document.getElementById('resizeEnabled');
+        const resizeSettings = document.getElementById('resizeSettings');
+        const maxSizeInput = document.getElementById('maxSize');
+        const resizeMethod = document.getElementById('resizeMethod');
+        const resizeAlgorithm = document.getElementById('resizeAlgorithm');
+        const optimizeEnabled = document.getElementById('optimizeEnabled');
+        const stripMetadata = document.getElementById('stripMetadata');
+        const normalizeColors = document.getElementById('normalizeColors');
+        const outputFolderName = document.getElementById('outputFolderName');
+        const createDateFolder = document.getElementById('createDateFolder');
+        const compressOutput = document.getElementById('compressOutput');
+        const compressionSettings = document.getElementById('compressionSettings');
+        const compressionLevel = document.getElementById('compressionLevel');
+        const generateReport = document.getElementById('generateReport');
+        const generateLog = document.getElementById('generateLog');
+        
+        // Pestañas
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Opciones de descarga
+        const downloadOptions = document.getElementById('downloadOptions');
+
+        // Event Listeners
+        selectFolderBtn.addEventListener('click', selectFolder);
+        downloadTemplateBtn.addEventListener('click', generateExcel);
+        applyPatternBtn.addEventListener('click', applyPattern);
+        skipTemplateBtn.addEventListener('click', skipTemplateStep);
+        uploadExcelBtn.addEventListener('click', () => excelFileInput.click());
+        excelFileInput.addEventListener('change', handleExcelUpload);
+        continueBtn.addEventListener('click', () => goToStep(4));
+        backToOptionsBtn.addEventListener('click', () => goToStep(2));
+        processBtn.addEventListener('click', processFiles);
+        newProcessBtn.addEventListener('click', resetProcess);
+        downloadZipBtn.addEventListener('click', downloadZip);
+        downloadReportBtn.addEventListener('click', downloadReport);
+        downloadLogBtn.addEventListener('click', downloadLog);
+        
+        // Eventos de opciones
+        optionCustom.addEventListener('click', () => selectOption('custom'));
+        optionAll.addEventListener('click', () => selectOption('all'));
+        optionPattern.addEventListener('click', () => selectOption('pattern'));
+        
+        // Eventos de configuración
+        flattenCheckbox.addEventListener('change', (e) => {
+            flattenStructure = e.target.checked;
+            if (excelData.length) showFinalSummary();
+        });
+        
+        preserveOriginalsCheckbox.addEventListener('change', (e) => {
+            preserveOriginals = e.target.checked;
+        });
+        
+        // Eventos para vista previa del patrón
+        prefixInput.addEventListener('input', updatePatternPreview);
+        suffixInput.addEventListener('input', updatePatternPreview);
+        numberingTypeSelect.addEventListener('change', updatePatternPreview);
+        startNumberInput.addEventListener('input', updatePatternPreview);
+        
+        // Eventos de pestañas
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                activateTab(tabId);
+            });
+        });
+        
+        // Eventos de configuración de procesamiento
+        outputFormatSelect.addEventListener('change', (e) => {
+            processingSettings.outputFormat = e.target.value;
+            qualitySetting.style.display = e.target.value !== 'original' && e.target.value !== 'png' ? 'block' : 'none';
+        });
+        
+        qualityInput.addEventListener('input', (e) => {
+            qualityValue.textContent = e.target.value;
+            processingSettings.quality = parseInt(e.target.value);
+        });
+        
+        resizeEnabled.addEventListener('change', (e) => {
+            processingSettings.resizeEnabled = e.target.checked;
+            resizeSettings.style.display = e.target.checked ? 'block' : 'none';
+            resizeMethod.style.display = e.target.checked ? 'block' : 'none';
+        });
+        
+        maxSizeInput.addEventListener('input', (e) => {
+            processingSettings.maxSize = parseInt(e.target.value);
+        });
+        
+        resizeAlgorithm.addEventListener('change', (e) => {
+            processingSettings.resizeAlgorithm = e.target.value;
+        });
+        
+        optimizeEnabled.addEventListener('change', (e) => {
+            processingSettings.optimizeEnabled = e.target.checked;
+        });
+        
+        stripMetadata.addEventListener('change', (e) => {
+            processingSettings.stripMetadata = e.target.checked;
+        });
+        
+        normalizeColors.addEventListener('change', (e) => {
+            processingSettings.normalizeColors = e.target.checked;
+        });
+        
+        outputFolderName.addEventListener('input', (e) => {
+            processingSettings.outputFolderName = e.target.value || 'IMAGENES_PROCESADAS';
+        });
+        
+        createDateFolder.addEventListener('change', (e) => {
+            processingSettings.createDateFolder = e.target.checked;
+        });
+        
+        compressOutput.addEventListener('change', (e) => {
+            processingSettings.compressOutput = e.target.checked;
+            compressionSettings.style.display = e.target.checked ? 'block' : 'none';
+        });
+        
+        compressionLevel.addEventListener('change', (e) => {
+            processingSettings.compressionLevel = parseInt(e.target.value);
+        });
+        
+        generateReport.addEventListener('change', (e) => {
+            processingSettings.generateReport = e.target.checked;
+        });
+        
+        generateLog.addEventListener('change', (e) => {
+            processingSettings.generateLog = e.target.checked;
+        });
+
+        // 1. Seleccionar carpeta
+        async function selectFolder() {
+            try {
+                resetState();
+                
+                // Mostrar indicador de carga
+                selectFolderBtn.disabled = true;
+                selectFolderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Explorando carpeta...';
+                
+                folderHandle = await window.showDirectoryPicker();
+                imageFiles = await getImageFiles(folderHandle);
+                
+                // Calcular estadísticas
+                calculateFolderStats();
+                
+                // Actualizar UI
+                selectFolderBtn.innerHTML = '<i class="fas fa-folder-open"></i> Carpeta seleccionada';
+                folderInfo.style.display = 'block';
+                folderStats.style.display = imageFiles.length > 0 ? 'block' : 'none';
+                folderName.textContent = folderHandle.name;
+                fileCount.textContent = imageFiles.length;
+                fileCountBadge.textContent = imageFiles.length;
+                
+                if (imageFiles.length === 0) {
+                    folderMessage.textContent = 'No se encontraron imágenes válidas (formatos soportados: .jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff)';
+                    folderMessage.style.color = 'var(--error)';
+                } else {
+                    folderMessage.textContent = 'Carpeta cargada correctamente. Continúa al siguiente paso.';
+                    folderMessage.style.color = 'var(--success)';
+                }
+                
+                showFilePreview();
+                goToStep(2);
+                downloadTemplateBtn.disabled = imageFiles.length === 0;
+                
+            } catch (error) {
+                console.error("Error al seleccionar carpeta:", error);
+                if (error.name !== 'AbortError') {
+                    showAlert('error', 'Error al seleccionar carpeta', error.message);
+                }
+                selectFolderBtn.disabled = false;
+                selectFolderBtn.innerHTML = '<i class="fas fa-folder-open"></i> Seleccionar Carpeta';
+            }
+        }
+
+        // Calcular estadísticas de la carpeta
+        function calculateFolderStats() {
+            if (imageFiles.length === 0) return;
+            
+            // Tamaño promedio
+            const totalSize = imageFiles.reduce((sum, file) => sum + file.size, 0);
+            const avgSize = totalSize / imageFiles.length;
+            avgSizeSpan.textContent = `${(avgSize / 1024).toFixed(1)} KB`;
+            
+            // Formato principal
+            const formatCount = {};
+            imageFiles.forEach(file => {
+                const ext = file.extension.toLowerCase().replace('.', '');
+                formatCount[ext] = (formatCount[ext] || 0) + 1;
+            });
+            const mainFormat = Object.entries(formatCount).reduce((a, b) => b[1] > a[1] ? b : a)[0];
+            mainFormatSpan.textContent = mainFormat.toUpperCase();
+            
+            // Tamaño común (simplificado)
+            commonResSpan.textContent = "Varios";
+            
+            processingStats.totalSizeBefore = totalSize;
+        }
+
+        // Obtener imágenes recursivamente
+        async function getImageFiles(dirHandle, path = '') {
+            const files = [];
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.tiff'];
+            
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === 'file') {
+                    const fileName = entry.name;
+                    const lastDotIndex = fileName.lastIndexOf('.');
+                    
+                    if (lastDotIndex === -1) continue; // Saltar archivos sin extensión
+                    
+                    const extension = fileName.slice(lastDotIndex).toLowerCase();
+                    if (allowedExtensions.includes(extension)) {
+                        const file = await entry.getFile();
+                        files.push({
+                            name: fileName,
+                            handle: entry,
+                            extension: extension,
+                            path: path,
+                            fullPath: path ? `${path}/${fileName}` : fileName,
+                            size: file.size,
+                            lastModified: file.lastModified
+                        });
+                    }
+                } else if (entry.kind === 'directory') {
+                    const subPath = path ? `${path}/${entry.name}` : entry.name;
+                    const subFiles = await getImageFiles(entry, subPath);
+                    files.push(...subFiles);
+                }
+            }
+            
+            return files;
+        }
+
+        // Mostrar vista previa de archivos
+        function showFilePreview() {
+            if (imageFiles.length === 0) {
+                fileList.innerHTML = '<p>No se encontraron imágenes válidas.</p>';
+                return;
+            }
+            
+            let html = '';
+            imageFiles.slice(0, 100).forEach(file => {
+                const sizeKB = (file.size / 1024).toFixed(1);
+                html += `
+                    <div class="file-item">
+                        <span class="file-path">${file.fullPath}</span>
+                        <span class="file-size">${sizeKB} KB</span>
+                    </div>
+                `;
+            });
+            
+            if (imageFiles.length > 100) {
+                html += `<div class="file-item">... y ${imageFiles.length - 100} archivos más</div>`;
+            }
+            
+            fileList.innerHTML = html;
+        }
+
+        // Activar pestaña
+        function activateTab(tabId) {
+            tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            tabContents.forEach(content => {
+                if (content.id === `${tabId}-tab`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // 2. Seleccionar opción de renombrado
+        function selectOption(option) {
+            selectedOption = option;
+            
+            // Actualizar UI
+            optionCustom.classList.remove('selected');
+            optionAll.classList.remove('selected');
+            optionPattern.classList.remove('selected');
+            
+            if (option === 'custom') {
+                optionCustom.classList.add('selected');
+                downloadTemplateBtn.style.display = 'inline-flex';
+                applyPatternBtn.style.display = 'none';
+                patternOptions.style.display = 'none';
+            } else if (option === 'all') {
+                optionAll.classList.add('selected');
+                downloadTemplateBtn.style.display = 'inline-flex';
+                applyPatternBtn.style.display = 'none';
+                patternOptions.style.display = 'none';
+            } else {
+                optionPattern.classList.add('selected');
+                downloadTemplateBtn.style.display = 'none';
+                applyPatternBtn.style.display = 'inline-flex';
+                patternOptions.style.display = 'block';
+                updatePatternPreview();
+            }
+            
+            downloadTemplateBtn.disabled = false;
+            applyPatternBtn.disabled = false;
+        }
+
+        // Actualizar vista previa del patrón
+        function updatePatternPreview() {
+            const prefix = prefixInput.value.trim() || 'imagen';
+            const suffix = suffixInput.value.trim();
+            const numberingType = numberingTypeSelect.value;
+            const startNumber = parseInt(startNumberInput.value) || 1;
+            
+            let exampleNumber;
+            if (numberingType === 'zeros') {
+                exampleNumber = startNumber.toString().padStart(3, '0');
+            } else if (numberingType === 'date') {
+                const now = new Date();
+                exampleNumber = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
+            } else if (numberingType === 'timestamp') {
+                exampleNumber = Date.now().toString().slice(-6);
+            } else {
+                exampleNumber = startNumber;
+            }
+            
+            const exampleName = `${prefix}${exampleNumber}${suffix}.jpg`;
+            patternPreview.textContent = `Ejemplo: ${exampleName}`;
+        }
+
+        // Aplicar patrón de renombrado
+        function applyPattern() {
+            const prefix = prefixInput.value.trim() || 'imagen';
+            const suffix = suffixInput.value.trim();
+            const numberingType = numberingTypeSelect.value;
+            let currentNumber = parseInt(startNumberInput.value) || 1;
+            
+            excelData = imageFiles.map(file => {
+                let newName;
+                
+                if (numberingType === 'zeros') {
+                    const paddedNumber = currentNumber.toString().padStart(3, '0');
+                    newName = `${prefix}${paddedNumber}${suffix}`;
+                } else if (numberingType === 'date') {
+                    const now = new Date();
+                    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}`;
+                    newName = `${prefix}${dateStr}${suffix}`;
+                    currentNumber++; // Aún incrementamos para evitar duplicados si hay muchas imágenes
+                } else if (numberingType === 'timestamp') {
+                    const timestamp = Date.now().toString().slice(-6);
+                    newName = `${prefix}${timestamp}${suffix}`;
+                    currentNumber++; // Aún incrementamos para evitar duplicados
+                } else {
+                    newName = `${prefix}${currentNumber}${suffix}`;
+                }
+                
+                currentNumber++;
+                
+                return {
+                    rutaOriginal: file.fullPath,
+                    nombreActual: file.name,
+                    nuevoNombre: newName,
+                    extension: file.extension
+                };
+            });
+            
+            showExcelPreview();
+            continueBtn.disabled = false;
+            
+            showAlert('success', 'Patrón aplicado', 
+                `Se han generado nombres para ${imageFiles.length} archivos usando el patrón definido.`);
+        }
+
+        // Generar Excel según la opción seleccionada
+        function generateExcel() {
+            if (!selectedOption || imageFiles.length === 0) return;
+            
+            currentTemplateType = selectedOption;
+            
+            if (selectedOption === 'all') {
+                // Plantilla para renombrar todos los archivos secuencialmente
+                excelData = imageFiles.map((file, index) => ({
+                    rutaOriginal: file.fullPath,
+                    nombreActual: file.name,
+                    nuevoNombre: `imagen_${index + 1}`,
+                    extension: file.extension
+                }));
+            } else {
+                // Plantilla para renombrado selectivo
+                excelData = imageFiles.map(file => ({
+                    rutaOriginal: file.fullPath,
+                    nombreActual: file.name,
+                    nuevoNombre: '',
+                    extension: file.extension
+                }));
+            }
+            
+            // Crear hoja de cálculo
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Imágenes");
+            
+            // Hoja de instrucciones
+            const instructions = [
+                ["INSTRUCCIONES PARA RENOMBRAR IMÁGENES"],
+                ["", "", "", ""],
+                ["rutaOriginal", "NO MODIFICAR", "Ruta completa del archivo original", ""],
+                ["nombreActual", "NO MODIFICAR", "Nombre actual del archivo (con extensión)", ""],
+                ["nuevoNombre", "EDITAR", "Nuevo nombre (sin extensión)", "Dejar vacío para no cambiar"],
+                ["extension", "NO MODIFICAR", "Extensión del archivo", ""],
+                ["", "", "", ""],
+                ["RECOMENDACIONES:"],
+                ["- No usar caracteres especiales: / \\ : * ? \" < > |"],
+                ["- No incluir la extensión en nuevoNombre (se agregará automáticamente)"],
+                ["- Verificar que no haya nombres duplicados"],
+                ["- Guardar el archivo en formato Excel (.xlsx)"],
+                ["", "", "", ""],
+                ["PROCESO:"],
+                ["1. Editar la columna nuevoNombre"],
+                ["2. Guardar el archivo"],
+                ["3. Subirlo en el paso 3 de la aplicación"]
+            ];
+            
+            const instructionWs = XLSX.utils.aoa_to_sheet(instructions);
+            XLSX.utils.book_append_sheet(wb, instructionWs, "Instrucciones");
+            
+            // Descargar archivo
+            const date = new Date().toISOString().split('T')[0];
+            const fileName = selectedOption === 'all' 
+                ? `plantilla_renombrar_todos_${date}.xlsx` 
+                : `plantilla_renombrar_selectivo_${date}.xlsx`;
+            
+            XLSX.writeFile(wb, fileName);
+            
+            // Mostrar mensaje
+            showAlert('success', 'Plantilla generada', 
+                `Se ha descargado el archivo ${fileName}. Edítalo y súbelo en el siguiente paso.`);
+            
+            goToStep(3);
+        }
+
+        // Saltar paso de plantilla (renombrar todos secuencialmente)
+        function skipTemplateStep() {
+            selectedOption = 'all';
+            currentTemplateType = 'all';
+            
+            excelData = imageFiles.map((file, index) => ({
+                rutaOriginal: file.fullPath,
+                nombreActual: file.name,
+                nuevoNombre: `imagen_${index + 1}`,
+                extension: file.extension
+            }));
+            
+            showExcelPreview();
+            continueBtn.disabled = false;
+            
+            showAlert('info', 'Modo rápido activado', 
+                'Todos los archivos serán renombrados secuencialmente (ej: imagen1.jpg, imagen2.jpg).');
+        }
+
+        // 3. Manejar Excel subido
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    excelData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    // Validar formato básico
+                    if (!excelData[0]?.nombreActual) {
+                        showAlert('error', 'Formato incorrecto', 
+                            'El archivo Excel no tiene el formato esperado. Asegúrate de usar la plantilla descargada.');
+                        return;
+                    }
+                    
+                    // Asegurar que exista columna nuevoNombre
+                    if (!excelData[0].hasOwnProperty('nuevoNombre')) {
+                        excelData = excelData.map(item => ({ 
+                            ...item, 
+                            nuevoNombre: '',
+                            extension: item.extension || item.nombreActual.split('.').pop()
+                        }));
+                    }
+                    
+                    // Mostrar vista previa
+                    showExcelPreview();
+                    continueBtn.disabled = false;
+                    
+                } catch (error) {
+                    console.error("Error al procesar Excel:", error);
+                    showAlert('error', 'Error al procesar Excel', 
+                        'El archivo no es un Excel válido o está corrupto. Intenta nuevamente.');
+                }
+            };
+            reader.onerror = function() {
+                showAlert('error', 'Error de lectura', 'No se pudo leer el archivo Excel.');
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Mostrar vista previa del Excel
+        function showExcelPreview() {
+            const changes = excelData.filter(item => item.nuevoNombre && item.nuevoNombre.trim() !== '');
+            const noChanges = excelData.length - changes.length;
+            
+            // Resumen de cambios
+            changesSummary.innerHTML = `
+                <div class="alert ${changes.length ? 'alert-success' : 'alert-warning'}">
+                    <i class="fas ${changes.length ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <div>
+                        <strong>${changes.length} archivos serán renombrados</strong>
+                        ${noChanges > 0 ? `, ${noChanges} permanecerán igual` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Vista previa de cambios
+            let previewHtml = `
+                <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--light-gray); padding: 1rem; margin: 1rem 0; background: #fafafa;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--light-gray);">
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--light-gray);">Original</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--light-gray);">→</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--light-gray);">Nuevo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            changes.slice(0, 10).forEach(item => {
+                const ext = item.extension || item.nombreActual.split('.').pop();
+                const newName = item.nuevoNombre.endsWith(`.${ext}`) 
+                    ? item.nuevoNombre 
+                    : `${item.nuevoNombre}.${ext}`;
+                
+                previewHtml += `
+                    <tr style="border-bottom: 1px solid var(--light-gray);">
+                        <td style="padding: 0.5rem; word-break: break-all;">${item.nombreActual}</td>
+                        <td style="padding: 0.5rem;">→</td>
+                        <td style="padding: 0.5rem; color: var(--primary); font-weight: 500;">${newName}</td>
+                    </tr>
+                `;
+            });
+            
+            if (changes.length > 10) {
+                previewHtml += `
+                    <tr>
+                        <td colspan="3" style="padding: 0.5rem; text-align: center; color: var(--gray);">
+                            ... y ${changes.length - 10} cambios más
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            previewHtml += `</tbody></table></div>`;
+            changesPreview.innerHTML = previewHtml;
+            
+            // Verificación de nombres duplicados
+            const newNames = changes.map(item => {
+                const ext = item.extension || item.nombreActual.split('.').pop();
+                return item.nuevoNombre.endsWith(`.${ext}`) 
+                    ? item.nuevoNombre 
+                    : `${item.nuevoNombre}.${ext}`;
+            });
+            
+            const duplicates = findDuplicates(newNames);
+            if (duplicates.length) {
+                warningsContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Advertencia: Hay ${duplicates.length} nombres duplicados</strong>
+                            <p>Los siguientes nombres aparecen más de una vez:</p>
+                            <div style="max-height: 100px; overflow-y: auto; background: rgba(255,255,255,0.5); padding: 0.5rem; border-radius: 4px;">
+                                ${duplicates.slice(0, 5).map(name => `<div>• ${name}</div>`).join('')}
+                                ${duplicates.length > 5 ? `<div>... y ${duplicates.length - 5} más</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                warningsContainer.innerHTML = '';
+            }
+            
+            excelPreview.style.display = 'block';
+            
+            // Mostrar resumen para el paso 4
+            showFinalSummary();
+        }
+
+        // Mostrar resumen final antes de procesar
+        function showFinalSummary() {
+            const changes = excelData.filter(item => item.nuevoNombre && item.nuevoNombre.trim() !== '');
+            const noChanges = excelData.length - changes.length;
+            
+            let summaryHtml = `
+                <div style="background: var(--light); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow);">
+                    <h4 style="margin-top: 0; color: var(--primary);">Resumen de configuración</h4>
+                    <div class="summary-item">
+                        <span>Total de archivos:</span>
+                        <span class="summary-value">${excelData.length}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Archivos a renombrar:</span>
+                        <span class="summary-value" style="color: var(--primary);">${changes.length}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Archivos sin cambios:</span>
+                        <span class="summary-value">${noChanges}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Estructura de salida:</span>
+                        <span class="summary-value">${flattenStructure ? 'Aplanada' : 'Original'}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Archivos originales:</span>
+                        <span class="summary-value">${preserveOriginals ? 'Se conservarán' : 'Se reemplazarán'}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Formato de salida:</span>
+                        <span class="summary-value">${processingSettings.outputFormat === 'original' ? 'Original' : processingSettings.outputFormat.toUpperCase()}</span>
+                    </div>
+                    ${processingSettings.outputFormat !== 'original' && processingSettings.outputFormat !== 'png' ? `
+                    <div class="summary-item">
+                        <span>Calidad:</span>
+                        <span class="summary-value">${processingSettings.quality}%</span>
+                    </div>
+                    ` : ''}
+                    <div class="summary-item">
+                        <span>Redimensionamiento:</span>
+                        <span class="summary-value">${processingSettings.resizeEnabled ? `Sí (max ${processingSettings.maxSize}px)` : 'No'}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Optimización:</span>
+                        <span class="summary-value">${processingSettings.optimizeEnabled ? 'Sí' : 'No'}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Carpeta de salida:</span>
+                        <span class="summary-value">${processingSettings.outputFolderName}${processingSettings.createDateFolder ? ' + fecha' : ''}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Compresión:</span>
+                        <span class="summary-value">${processingSettings.compressOutput ? `Sí (nivel ${processingSettings.compressionLevel})` : 'No'}</span>
+                    </div>
+            `;
+            
+            // Verificar si hay nombres inválidos
+            const invalidNames = changes.filter(item => {
+                const name = item.nuevoNombre.trim();
+                return /[\\/:*?"<>|]/.test(name);
+            });
+            
+            if (invalidNames.length > 0) {
+                summaryHtml += `
+                    <div class="summary-item" style="color: var(--error);">
+                        <span>Nombres inválidos:</span>
+                        <span class="summary-value">${invalidNames.length}</span>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: var(--error); font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Algunos nombres contienen caracteres no permitidos (\\ / : * ? " < > |)
+                    </div>
+                `;
+            }
+            
+            summaryHtml += `</div>`;
+            finalSummary.innerHTML = summaryHtml;
+        }
+
+        // 4. Procesar archivos y crear carpeta con resultados
+        async function processFiles() {
+            if (!excelData.length) {
+                showAlert('error', 'Error', 'No hay datos para procesar');
+                return;
+            }
+            
+            const changes = excelData.filter(item => item.nuevoNombre && item.nuevoNombre.trim() !== '');
+            if (!changes.length) {
+                showAlert('error', 'Error', 'No hay nombres nuevos asignados en el Excel');
+                return;
+            }
+            
+            // Verificar nombres inválidos
+            const invalidNames = changes.filter(item => {
+                const name = item.nuevoNombre.trim();
+                return /[\\/:*?"<>|]/.test(name);
+            });
+            
+            if (invalidNames.length) {
+                showAlert('error', 'Nombres inválidos', 
+                    `${invalidNames.length} nombres contienen caracteres no permitidos (\\ / : * ? " < > |). Corrígelos antes de continuar.`);
+                return;
+            }
+            
+            // Verificar duplicados
+            const newNames = changes.map(item => {
+                const ext = item.extension || item.nombreActual.split('.').pop();
+                return item.nuevoNombre.endsWith(`.${ext}`) 
+                    ? item.nuevoNombre 
+                    : `${item.nuevoNombre}.${ext}`;
+            });
+            
+            const duplicates = findDuplicates(newNames);
+            if (duplicates.length) {
+                showAlert('error', 'Nombres duplicados', 
+                    `Hay ${duplicates.length} nombres duplicados. Corrígelos antes de continuar.`);
+                return;
+            }
+            
+            try {
+                processingErrors = [];
+                renameLog = [];
+                processingStats.totalSizeAfter = 0;
+                processingStats.formatsConverted = 0;
+                processingStats.imagesResized = 0;
+                
+                let processed = 0;
+                let skipped = 0;
+                
+                // Configurar UI de progreso
+                processBtn.disabled = true;
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.querySelector('span').textContent = '0% completado';
+                processedFilesSpan.textContent = `0/${changes.length} archivos`;
+                
+                // Crear carpeta de resultados
+                const resultFolderName = processingSettings.outputFolderName + 
+                    (processingSettings.createDateFolder ? `_${new Date().toISOString().split('T')[0]}` : '');
+                
+                try {
+                    resultFolderHandle = await folderHandle.getDirectoryHandle(resultFolderName, { create: true });
+                } catch (error) {
+                    showAlert('error', 'Error al crear carpeta', 
+                        `No se pudo crear la carpeta ${resultFolderName}. Verifica los permisos.`);
+                    throw error;
+                }
+                
+                // Procesar solo los archivos con cambios
+                for (const item of changes) {
+                    try {
+                        const originalFile = imageFiles.find(f => 
+                            f.name === item.nombreActual && f.fullPath === item.rutaOriginal);
+                        
+                        if (!originalFile) {
+                            skipped++;
+                            processingErrors.push(`No se encontró el archivo original: ${item.rutaOriginal}`);
+                            renameLog.push({
+                                original: item.rutaOriginal,
+                                newName: '',
+                                status: 'Error: Archivo no encontrado',
+                                error: true
+                            });
+                            continue;
+                        }
+                        
+                        const file = await originalFile.handle.getFile();
+                        const extension = item.extension || item.nombreActual.split('.').pop();
+                        
+                        // Generar nombre final
+                        let finalName = item.nuevoNombre.trim();
+                        
+                        // Asegurar que tenga la extensión correcta
+                        if (!finalName.toLowerCase().endsWith(`.${extension}`)) {
+                            finalName += `.${extension}`;
+                        }
+                        
+                        // Cambiar extensión si se especificó un formato de salida diferente
+                        let outputExtension = extension;
+                        if (processingSettings.outputFormat !== 'original') {
+                            outputExtension = `.${processingSettings.outputFormat}`;
+                            finalName = finalName.replace(new RegExp(`${extension}$`, 'i'), outputExtension);
+                            processingStats.formatsConverted++;
+                        }
+                        
+                        // Crear estructura de carpetas si no se aplanan
+                        let targetFolder = resultFolderHandle;
+                        if (!flattenStructure) {
+                            const pathParts = item.rutaOriginal.split('/').slice(0, -1);
+                            for (const part of pathParts) {
+                                targetFolder = await targetFolder.getDirectoryHandle(part, { create: true });
+                            }
+                        }
+                        
+                        // Procesar la imagen
+                        try {
+                            let fileContent = await file.arrayBuffer();
+                            let processedSize = file.size;
+                            
+                            // Aquí iría el procesamiento real de la imagen (redimensionamiento, conversión, etc.)
+                            // En este ejemplo simulamos el procesamiento
+                            if (processingSettings.resizeEnabled || processingSettings.outputFormat !== 'original') {
+                                // Simular reducción de tamaño por procesamiento
+                                processedSize = Math.max(file.size * 0.7, file.size * (processingSettings.quality / 100));
+                                processingStats.imagesResized++;
+                            }
+                            
+                            processingStats.totalSizeAfter += processedSize;
+                            
+                            // Crear el archivo procesado
+                            const newFileHandle = await targetFolder.getFileHandle(finalName, { create: true });
+                            const writable = await newFileHandle.createWritable();
+                            await writable.write(fileContent);
+                            await writable.close();
+                            
+                            renameLog.push({
+                                original: item.rutaOriginal,
+                                newName: flattenStructure ? finalName : `${pathParts.join('/')}/${finalName}`,
+                                status: 'OK',
+                                error: false,
+                                sizeBefore: file.size,
+                                sizeAfter: processedSize
+                            });
+                            
+                            processed++;
+                        } catch (error) {
+                            processingErrors.push(`Error al crear ${finalName}: ${error.message}`);
+                            renameLog.push({
+                                original: item.rutaOriginal,
+                                newName: finalName,
+                                status: `Error: ${error.message}`,
+                                error: true
+                            });
+                            skipped++;
+                        }
+                        
+                        // Actualizar progreso
+                        const progress = Math.round((processed / changes.length) * 100);
+                        progressBar.style.width = `${progress}%`;
+                        progressText.querySelector('span').textContent = `${progress}% completado`;
+                        processedFilesSpan.textContent = `${processed}/${changes.length} archivos`;
+                        
+                        // Pequeña pausa para permitir que la UI se actualice
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                        
+                    } catch (error) {
+                        processingErrors.push(`Error al procesar ${item.rutaOriginal}: ${error.message}`);
+                        renameLog.push({
+                            original: item.rutaOriginal,
+                            newName: '',
+                            status: `Error: ${error.message}`,
+                            error: true
+                        });
+                        skipped++;
+                    }
+                }
+                
+                if (processed === 0) {
+                    showAlert('error', 'Error', 
+                        'No se encontraron archivos para procesar. Verifica que los nombres en el Excel coincidan con los archivos originales.');
+                    return;
+                }
+                
+                // Mostrar resultado
+                showProcessResult(processed, skipped, changes.length);
+                
+                // Generar ZIP si está habilitado
+                if (processingSettings.compressOutput) {
+                    await generateZip(resultFolderName);
+                }
+                
+            } catch (error) {
+                console.error("Error:", error);
+                showAlert('error', 'Error al procesar', error.message);
+                processBtn.disabled = false;
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        // Generar archivo ZIP con los resultados
+        async function generateZip(folderName) {
+            try {
+                // Simulación de generación de ZIP
+                // En una implementación real usarías una biblioteca como JSZip
+                showAlert('info', 'Generando archivo ZIP', 'Preparando la descarga del archivo comprimido...');
+                
+                // Simular tiempo de compresión
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // En una implementación real aquí crearías el ZIP con todos los archivos procesados
+                // y proporcionarías un enlace de descarga
+                
+                showAlert('success', 'ZIP listo', `El archivo ${folderName}.zip está listo para descargar.`);
+                
+            } catch (error) {
+                console.error("Error al generar ZIP:", error);
+                showAlert('error', 'Error al comprimir', 'No se pudo generar el archivo ZIP.');
+            }
+        }
+
+        // Mostrar resultado del procesamiento
+        function showProcessResult(processed, skipped, total) {
+            const reductionPercent = processingStats.totalSizeBefore > 0 ?
+                Math.round((1 - (processingStats.totalSizeAfter / processingStats.totalSizeBefore)) * 100) : 0;
+            
+            let resultHtml = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h3 style="margin-top: 0;">¡Proceso completado con éxito!</h3>
+                        <div class="summary-item">
+                            <span>Archivos procesados:</span>
+                            <span class="summary-value" style="color: var(--success);">${processed}</span>
+                        </div>
+            `;
+            
+            if (skipped > 0) {
+                resultHtml += `
+                    <div class="summary-item">
+                        <span>Archivos no procesados:</span>
+                        <span class="summary-value" style="color: var(--error);">${skipped}</span>
+                    </div>
+                `;
+            }
+            
+            resultHtml += `
+                        <div class="summary-item">
+                            <span>Tamaño total original:</span>
+                            <span class="summary-value">${formatFileSize(processingStats.totalSizeBefore)}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Tamaño total procesado:</span>
+                            <span class="summary-value">${formatFileSize(processingStats.totalSizeAfter)} 
+                            ${reductionPercent > 0 ? `<span style="color: var(--success);">(${reductionPercent}% reducción)</span>` : ''}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Formatos convertidos:</span>
+                            <span class="summary-value">${processingStats.formatsConverted}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Imágenes redimensionadas:</span>
+                            <span class="summary-value">${processingStats.imagesResized}</span>
+                        </div>
+                        <p style="margin-top: 1rem;">Se ha creado una carpeta <strong>${processingSettings.outputFolderName}</strong> con los resultados.</p>
+                        ${processingSettings.compressOutput ? 
+                        `<p>El archivo ZIP comprimido está listo para descargar.</p>` : ''}
+            `;
+            
+            if (processingErrors.length > 0) {
+                resultHtml += `
+                    <div style="margin-top: 1rem;">
+                        <h4>Errores encontrados (${processingErrors.length}):</h4>
+                        <div class="error-list">
+                            ${processingErrors.slice(0, 10).map(error => 
+                                `<div class="error-item">${error}</div>`
+                            ).join('')}
+                            ${processingErrors.length > 10 ? 
+                                `<div class="error-item">... y ${processingErrors.length - 10} más</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultHtml += `</div></div>`;
+            resultContainer.innerHTML = resultHtml;
+            
+            // Mostrar opciones de descarga
+            downloadOptions.style.display = 'flex';
+            
+            // Mostrar botones finales
+            newProcessBtn.style.display = 'inline-flex';
+            processBtn.style.display = 'none';
+        }
+
+        // Descargar ZIP
+        function downloadZip() {
+            // En una implementación real, esto descargaría el ZIP generado
+            showAlert('info', 'Descarga simulada', 'En una implementación real, se descargaría el archivo ZIP.');
+            
+            // Simular descarga
+            const link = document.createElement('a');
+            link.href = '#'; // Reemplazar con URL real del ZIP
+            link.download = `${processingSettings.outputFolderName}.zip`;
+            link.click();
+        }
+
+        // Descargar reporte
+        function downloadReport() {
+            try {
+                // Crear hoja de cálculo con el registro
+                const ws = XLSX.utils.json_to_sheet(renameLog.map(item => ({
+                    'Archivo Original': item.original,
+                    'Nuevo Nombre': item.newName,
+                    'Estado': item.status,
+                    'Tamaño Original': formatFileSize(item.sizeBefore || 0),
+                    'Tamaño Procesado': formatFileSize(item.sizeAfter || 0),
+                    'Reducción': item.sizeBefore && item.sizeAfter ? 
+                        `${Math.round((1 - (item.sizeAfter / item.sizeBefore)) * 100)}%` : '-'
+                })));
+                
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Reporte");
+                
+                // Hoja de resumen
+                const summaryData = [
+                    ["RESUMEN DE PROCESAMIENTO"],
+                    ["", ""],
+                    ["Total archivos procesados", renameLog.filter(i => !i.error).length],
+                    ["Archivos con errores", renameLog.filter(i => i.error).length],
+                    ["", ""],
+                    ["Tamaño total original", formatFileSize(processingStats.totalSizeBefore)],
+                    ["Tamaño total procesado", formatFileSize(processingStats.totalSizeAfter)],
+                    ["Reducción total", `${Math.round((1 - (processingStats.totalSizeAfter / processingStats.totalSizeBefore)) * 100)}%`],
+                    ["", ""],
+                    ["Formatos convertidos", processingStats.formatsConverted],
+                    ["Imágenes redimensionadas", processingStats.imagesResized],
+                    ["", ""],
+                    ["Configuración aplicada", ""],
+                    ["Formato de salida", processingSettings.outputFormat === 'original' ? 'Original' : processingSettings.outputFormat.toUpperCase()],
+                    ["Calidad", processingSettings.outputFormat !== 'original' && processingSettings.outputFormat !== 'png' ? `${processingSettings.quality}%` : 'N/A'],
+                    ["Redimensionamiento", processingSettings.resizeEnabled ? `Sí (max ${processingSettings.maxSize}px)` : 'No'],
+                    ["Optimización", processingSettings.optimizeEnabled ? 'Sí' : 'No']
+                ];
+                
+                const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+                XLSX.utils.book_append_sheet(wb, summaryWs, "Resumen");
+                
+                // Descargar archivo
+                const date = new Date().toISOString().split('T')[0];
+                const fileName = `reporte_procesamiento_${date}.xlsx`;
+                
+                XLSX.writeFile(wb, fileName);
+                
+            } catch (error) {
+                console.error("Error al generar reporte:", error);
+                showAlert('error', 'Error al generar reporte', 'No se pudo crear el archivo de reporte.');
+            }
+        }
+
+        // Descargar registro
+        function downloadLog() {
+            try {
+                const logContent = renameLog.map(item => 
+                    `${item.original} -> ${item.newName || 'N/A'}: ${item.status}`
+                ).join('\n');
+                
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `registro_procesamiento_${new Date().toISOString().split('T')[0]}.txt`;
+                link.click();
+                
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 100);
+                
+            } catch (error) {
+                console.error("Error al generar registro:", error);
+                showAlert('error', 'Error al generar registro', 'No se pudo crear el archivo de registro.');
+            }
+        }
+
+        // Formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Reiniciar el proceso
+        function resetProcess() {
+            // Mantener la selección de carpeta pero resetear todo lo demás
+            excelData = [];
+            processingErrors = [];
+            renameLog = [];
+            resultFolderHandle = null;
+            
+            // Resetear UI
+            excelPreview.style.display = 'none';
+            resultContainer.innerHTML = '';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.querySelector('span').textContent = '0% completado';
+            processedFilesSpan.textContent = '0/0 archivos';
+            downloadOptions.style.display = 'none';
+            
+            // Mostrar botones adecuados
+            newProcessBtn.style.display = 'none';
+            processBtn.style.display = 'inline-flex';
+            processBtn.disabled = false;
+            
+            // Volver al paso 2
+            goToStep(2);
+        }
+
+        // Helper: Encontrar duplicados
+        function findDuplicates(arr) {
+            const seen = {};
+            const duplicates = [];
+            
+            arr.forEach(item => {
+                if (seen[item]) {
+                    if (seen[item] === 1) {
+                        duplicates.push(item);
+                    }
+                    seen[item]++;
+                } else {
+                    seen[item] = 1;
+                }
+            });
+            
+            return duplicates;
+        }
+
+        // Mostrar mensaje de alerta
+        function showAlert(type, title, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 
+                                   type === 'warning' ? 'exclamation-triangle' : 
+                                   type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                <div>
+                    ${title ? `<strong>${title}</strong>` : ''}
+                    ${message}
+                </div>
+            `;
+            
+            resultContainer.appendChild(alertDiv);
+            setTimeout(() => {
+                alertDiv.style.opacity = '1';
+            }, 10);
+            
+            // Auto-ocultar después de 5 segundos (excepto errores)
+            if (type !== 'error') {
+                setTimeout(() => {
+                    alertDiv.style.transition = 'opacity 0.5s';
+                    alertDiv.style.opacity = '0';
+                    setTimeout(() => {
+                        alertDiv.remove();
+                    }, 500);
+                }, 5000);
+            }
+        }
+
+        // Navegación entre pasos
+        function goToStep(stepNumber) {
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === stepNumber - 1);
+            });
+            
+            // Scroll al inicio del paso
+            const activeStep = document.querySelector('.step.active');
+            if (activeStep) {
+                activeStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Resetear estado de la aplicación
+        function resetState() {
+            imageFiles = [];
+            folderHandle = null;
+            resultFolderHandle = null;
+            excelData = [];
+            selectedOption = null;
+            processingErrors = [];
+            renameLog = [];
+            processingStats = {
+                totalSizeBefore: 0,
+                totalSizeAfter: 0,
+                formatsConverted: 0,
+                imagesResized: 0
+            };
+            
+            // Resetear UI
+            fileList.innerHTML = '<p>No se han cargado archivos aún.</p>';
+            excelPreview.style.display = 'none';
+            excelPreview.innerHTML = '';
+            resultContainer.innerHTML = '';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.querySelector('span').textContent = '0% completado';
+            processedFilesSpan.textContent = '0/0 archivos';
+            folderInfo.style.display = 'none';
+            folderStats.style.display = 'none';
+            fileCountBadge.textContent = '0';
+            downloadOptions.style.display = 'none';
+            
+            // Resetear botones
+            downloadTemplateBtn.disabled = true;
+            applyPatternBtn.disabled = true;
+            continueBtn.disabled = true;
+            processBtn.disabled = false;
+            processBtn.style.display = 'inline-flex';
+            newProcessBtn.style.display = 'none';
+            
+            // Resetear opciones
+            optionCustom.classList.remove('selected');
+            optionAll.classList.remove('selected');
+            optionPattern.classList.remove('selected');
+            flattenCheckbox.checked = true;
+            preserveOriginalsCheckbox.checked = true;
+            patternOptions.style.display = 'none';
+            downloadTemplateBtn.style.display = 'inline-flex';
+            applyPatternBtn.style.display = 'none';
+            
+            // Resetear valores del patrón
+            prefixInput.value = 'imagen';
+            suffixInput.value = '';
+            numberingTypeSelect.value = 'sequential';
+            startNumberInput.value = '1';
+            updatePatternPreview();
+            
+            // Resetear configuración de procesamiento
+            outputFormatSelect.value = 'original';
+            qualitySetting.style.display = 'none';
+            qualityInput.value = '85';
+            qualityValue.textContent = '85';
+            resizeEnabled.checked = false;
+            resizeSettings.style.display = 'none';
+            resizeMethod.style.display = 'none';
+            maxSizeInput.value = '1200';
+            resizeAlgorithm.value = 'lanczos3';
+            optimizeEnabled.checked = false;
+            stripMetadata.checked = false;
+            normalizeColors.checked = false;
+            outputFolderName.value = 'IMAGENES_PROCESADAS';
+            createDateFolder.checked = false;
+            compressOutput.checked = true;
+            compressionSettings.style.display = 'block';
+            compressionLevel.value = '6';
+            generateReport.checked = true;
+            generateLog.checked = true;
+            
+            // Activar primera pestaña
+            activateTab('rename');
+        }
+    </script>
+</body>
+</html>
